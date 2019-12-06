@@ -26,6 +26,7 @@ class OpCode(IntEnum):
     JUMP_IF_FALSE = 6
     LESS_THAN = 7
     EQUALS = 8
+    TERMINATE = 99
 
 
 class IntCode:
@@ -41,8 +42,10 @@ class IntCode:
             return value
 
     def run(self):
-        while int(str(self.program[self.cursor])[-2:]) != 99:
+        while True:
             opcode = OpCode(int(str(inp[self.cursor])[-2:]))
+            if opcode == OpCode.TERMINATE:
+                break
             self.cursor += getattr(self, 'execute_' + opcode.name.lower())(str(self.program[self.cursor])[:-2])  # paramter is the opcode minus off last 2 digits
 
     def execute_add(self, instruction):
