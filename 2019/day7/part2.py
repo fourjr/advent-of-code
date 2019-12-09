@@ -1,3 +1,4 @@
+import itertools
 from defaultlist import defaultlist
 from enum import IntEnum
 
@@ -55,13 +56,20 @@ class IntCode:
         self.id = id_
         self.cursor = 0
         self.relative_base = 0
+        self.input_count = 0
+        self.start_count = 0
+        self.running = True
 
     def run(self):
-        while True:
+        self.start_count += 1
+        self.running = True
+        while self.running:
             instruction = Instruction(self, self.program[self.cursor])
             if instruction.opcode == OpCode.TERMINATE:
                 break
             self.cursor += getattr(self, 'execute_' + instruction.opcode.name.lower())(instruction)
+
+        return instruction.opcode == OpCode.TERMINATE
 
     def execute_add(self, instruction):
         instruction.write(2, instruction.read(0) + instruction.read(1))
@@ -72,11 +80,18 @@ class IntCode:
         return 4
 
     def execute_input(self, instruction):
-        instruction.write(0, self.id)
+        if self.input_count == 0:
+            instruction.write(0, phase_setting[self.id])
+        elif self.input_count == self.start_count:
+            instruction.write(0, input_signals[-1])
+        else:
+            self.running = False
+            return 0
+        self.input_count += 1
         return 2
 
     def execute_output(self, instruction):
-        print(self.cursor, instruction.read(0))
+        input_signals.append(instruction.read(0))
 
         return 2
 
@@ -114,4 +129,20 @@ class IntCode:
         return 2
 
 
-IntCode(inp, 2).run()
+input_signals_past = []
+for phase_setting in itertools.permutations(range(5, 10)):
+    input_signals = [0]
+    intcodes = []
+    for i in range(5):
+        intcodes.append(IntCode(inp, i))
+
+    breakout = False
+    while True:
+        for i in range(5):
+            if intcodes[i].run():
+                breakout = True
+        if breakout:
+            input_signals_past.append(input_signals[-1])
+            break
+
+print(max(input_signals_past))
