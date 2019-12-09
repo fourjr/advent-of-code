@@ -1,3 +1,4 @@
+import random
 from PIL import Image, ImageDraw
 
 
@@ -10,7 +11,7 @@ colors = [
 
 w, h = (25, 6)
 multiplier = 30
-img = Image.new('RGBA', (w * multiplier, h * multiplier))
+img = Image.new('RGB', (w * multiplier, h * multiplier))
 draw = ImageDraw.Draw(img)
 with open('input.txt') as f:
     inp = f.read()
@@ -32,18 +33,26 @@ for n in inp:
         layers[-1].append([])
     layers[-1][-1].append(int(n))
 
-cursor = [0, 0]
+count = 0
+possible_ww = range(0, w * multiplier, multiplier)
+possible_hh = range(0, h * multiplier, multiplier)
+possibles = [(ww, hh) for ww in possible_ww for hh in possible_hh]
+while len(possibles):
+    loc = random.choice(possibles)
+    possibles.remove(loc)
+    for l in layers:
+        color = colors[l[loc[1] // multiplier][loc[0] // multiplier]]
+        draw.rectangle((loc, (loc[0] + multiplier - 1, loc[1] + multiplier - 1)), color)
+        if color[3] != 0:
+            if color[0] != 0:
+                img.save(f'frames/{count}.png')
+                count += 1
+            break
 
-currzero = []
-for ww in range(w):
-    for hh in range(h):
-        for nl, l in enumerate(layers):
-            color = colors[l[hh][ww]]
-            draw.rectangle(cursor + [cursor[0] + multiplier, cursor[1] + multiplier], color)
-            if color[3] != 0:
-                break
-        cursor[1] += multiplier
-    cursor[1] = 0
-    cursor[0] += multiplier
+for _ in range(15):
+    # add more frames for the gif
+    img.save(f'frames/{count}.png')
+    count += 1
+# ffmpeg -i frames/%01d.png output.gif -framerate 20
 
 img.save('result.png')
