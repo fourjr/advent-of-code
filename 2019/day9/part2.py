@@ -62,7 +62,6 @@ class IntCode:
     def run(self):
         while True:
             instruction = Instruction(self, self.program[self.cursor])
-            print(instruction.opcode)
             if instruction.opcode == OpCode.TERMINATE:
                 break
             self.cursor += getattr(self, 'execute_' + instruction.opcode.name.lower())(instruction)
