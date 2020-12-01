@@ -6,7 +6,7 @@ namespace Day1
     {
         static void Main()
         {
-            string input = System.IO.File.ReadAllText("input.txt");
+            string input = System.IO.File.ReadAllText("C:/Users/jiarong/Documents/jr/adventofcode/2020/Day 1/input.txt");
             Console.WriteLine(Part1(input));
             Console.WriteLine(Part2(input));
         }
@@ -56,7 +56,7 @@ namespace Day1
                     }
                 }
             }
-            throw new Exception("Invalid input")
+            throw new Exception("Invalid input");
         }
     }
 }
