@@ -6,12 +6,12 @@ namespace Day1
     {
         static void Main()
         {
-            string input = System.IO.File.ReadAllText("C:/Users/jiarong/Documents/jr/adventofcode/2020/Day 1/input.txt");
-            Part1(input);
-            Part2(input);
+            string input = System.IO.File.ReadAllText("input.txt");
+            Console.WriteLine(Part1(input));
+            Console.WriteLine(Part2(input));
         }
 
-        static void Part1(string input)
+        static int Part1(string input)
         {
             string[] inputSplit = input.Split("\n");
             foreach (string x in inputSplit)
@@ -24,14 +24,14 @@ namespace Day1
                         int intVal2 = int.Parse(y);
                         if (intVal + intVal2 == 2020)
                         {
-                            Console.WriteLine(intVal * intVal2);
-                            return;
+                            return intVal * intVal2;
                         }
                     }
                 }
             }
+            throw new Exception("Invalid input");
         }
-        static void Part2(string input)
+        static int Part2(string input)
         {
             string[] inputSplit = input.Split("\n");
             foreach (string x in inputSplit)
@@ -49,14 +49,14 @@ namespace Day1
                                 int intVal3 = int.Parse(z);
                                 if (intVal + intVal2 + intVal3 == 2020)
                                 {
-                                    Console.WriteLine(intVal * intVal2 * intVal3);
-                                    return;
+                                    return intVal * intVal2 * intVal3;
                                 }
                             }
                         }
                     }
                 }
             }
+            throw new Exception("Invalid input")
         }
     }
 }
