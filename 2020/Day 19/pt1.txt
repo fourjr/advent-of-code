@@ -1,0 +1,174 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Day_19
+{
+    public class Rule
+    {
+        public bool isList;
+        public bool isAny;
+        public int ruleNo;
+        public List<Rule> listContent;
+        public string stringContent;
+        public int length
+        {
+            get
+            {
+                if (isList)
+                {
+                    if (isAny)
+                    {
+                        return listContent.Max(x => x.length);
+                    }
+                    else
+                    {
+                        return listContent.Sum(x => x.length);
+                    }
+                }
+                else
+                {
+                    return stringContent.Length;
+                }
+            }
+        }
+        public Rule(List<Rule> l, int ruleNo, bool any = false)
+        {
+            listContent = l;
+            isList = true;
+            isAny = any;
+        }
+        public Rule(string s, int ruleNo, bool any = false)
+        {
+            stringContent = s;
+            isList = false;
+            isAny = any;
+        }
+
+        public override string ToString()
+        {
+            return $"Day_19.Rule-{ruleNo}-{isList}-{length}";
+        }
+    }
+    class Program
+    {
+        static Dictionary<int, string> rules = new Dictionary<int, string>();
+        static Rule ParseRule(string rule, int ruleNo)
+        {
+            //Console.WriteLine(ruleNo);
+            List<string> realRule = new List<string>(rule.Split(' ').Skip(1));
+            if (realRule.Count() == 1 && realRule[0].StartsWith('"') && realRule[0].EndsWith('"'))
+            {
+                return new Rule(realRule[0].Trim('"'), ruleNo);
+            }
+            else
+            {
+                List<Rule> possible = new List<Rule>();
+                Rule current = new Rule(new List<Rule>(), ruleNo);
+                foreach (string x in realRule)
+                {
+                    if (x == "|")
+                    {
+                        possible.Add(current);
+                        current = new Rule(new List<Rule>(), ruleNo);
+                    }
+                    else {
+                        current.listContent.Add(ParseRule(rules[int.Parse(x)], int.Parse(x)));
+                    }
+                }
+
+                if (current.listContent.Count > 0)
+                {
+                    possible.Add(current);
+                }
+                return new Rule(possible, ruleNo, any: true);
+            }
+        }
+
+        static bool isValid(Rule r, string m)
+        {
+            //Console.WriteLine(r);
+            if (r.isList)
+            {
+                List<bool> allValid = new List<bool>();
+                int i = 0;
+                foreach (Rule rule in r.listContent)
+                {
+                    if (r.isAny)
+                    {
+                        bool valid = isValid(rule, m);
+                        if (valid)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        allValid.Add(isValid(rule, m.Substring(i, rule.length).ToString()));
+                    }
+                    i += rule.length;
+                }
+
+                if (i < m.Length)
+                {
+                    return false;
+                }
+
+                if (!r.isAny)
+                {
+                    if (allValid.All(x => x == true))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                //Console.WriteLine($"{r.stringContent} - {m}");
+                return r.stringContent == m;
+            }
+        }
+        static void Main()
+        {
+            string input = System.IO.File.ReadAllText("../../../input.txt");
+            string[] inputSplit = input.Split("\r\n\r\n");
+
+            string[] rulesArr = inputSplit[0].Split("\r\n");
+
+            foreach (string r in rulesArr)
+            {
+                int num = int.Parse(r.Split(' ')[0].Substring(0, r.Split(' ')[0].Length - 1));
+                string updatedR;
+                if (num == 8)
+                {
+                    updatedR = "8: 42 | 42 8";
+                }
+                else if (num == 11)
+                {
+                    updatedR = "11: 42 31 | 42 11 31";
+                }
+                else
+                {
+                    updatedR = r;
+                }
+                rules.Add(num, updatedR);
+            }
+
+            string[] messages = inputSplit[1].Split("\r\n");
+
+            Rule valid = ParseRule(rules[0], 0);
+
+            int count = 0;
+            foreach (string m in messages) {
+                bool validity = isValid(valid, m);
+                //Console.WriteLine($"{m}: {validity}");
+                if (validity) {
+                    count++;
+                };
+            }
+            Console.WriteLine(count);
+        }
+    }
+}
