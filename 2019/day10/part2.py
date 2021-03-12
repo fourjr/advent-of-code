@@ -45,8 +45,6 @@ class Tile:
     def __repr__(self):
         return f'<Tile coords={self.coords} symbol={self.symbol}>'
 
-    # def __hash__(self):
-    #     return hash(self.coords)
 
 with open('input.txt') as f:
     full_map = [[Tile((c, r), x) for c, x in enumerate(l)] for r, l in enumerate(f.read().splitlines())]
@@ -63,7 +61,7 @@ for r in full_map:
 
 s_sorted = OrderedDict(sorted(sighted.items(), key=operator.itemgetter(0)))
 s_sorted_keys = iter(list(s_sorted.keys()))
-for _ in range(199):
+for _ in range(200):
     try:
         k = next(s_sorted_keys)
     except StopIteration:
@@ -73,15 +71,7 @@ for _ in range(199):
         k = next(s_sorted_keys)
 
     full_map[s_sorted[k].coords[1]][s_sorted[k].coords[0]].symbol = '.'
-    s_sorted.pop(k)
+    last_removed = s_sorted.pop(k)
 
-
-try:
-    coords = s_sorted[next(s_sorted_keys)].coords
-except StopIteration:
-    sighted = full_map[station_position[1]][station_position[0]].can_see()
-    s_sorted = OrderedDict(sorted(sighted.items(), key=operator.itemgetter(0)))
-    s_sorted_keys = iter(list(s_sorted.keys()))
-    coords = s_sorted[next(s_sorted_keys)].coords
-
+coords = last_removed.coords
 print(coords[0] * 100 + coords[1])
