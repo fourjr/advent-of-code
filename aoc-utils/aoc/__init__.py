@@ -1,1 +1,1 @@
-from .helpers import get_input_as
+from .helpers import get_input_as, submit

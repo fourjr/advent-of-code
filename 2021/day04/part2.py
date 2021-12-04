@@ -59,7 +59,7 @@ for num in draw:
     for board in boards:
         board.play_num(num)
         if board.check_win():
-            board.running = True
+            board.running = False
             wins.append(board.get_score(num))
 
 print(wins[-1])
