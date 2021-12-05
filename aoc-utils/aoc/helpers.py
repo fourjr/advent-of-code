@@ -22,11 +22,13 @@ except (ValueError, IndexError):
 
 def get_input(*, sep):
     try:
-        with open(INPUT_FP) as f:
-            data = f.read()
+        with open(INPUT_FP, encoding='utf8') as f:
+            data = f.read().strip()
+            if not data:
+                raise FileNotFoundError
     except FileNotFoundError:
-        data = aocd.get_data(day=DAY, year=YEAR)
-        with open(INPUT_FP, 'w') as f:
+        data = aocd.get_data(day=DAY, year=YEAR).strip()
+        with open(INPUT_FP, 'w', encoding='utf8') as f:
             f.write(data)
 
     if sep is None:
@@ -40,4 +42,6 @@ def get_input_as(callback=str, sep=None):
 
 
 def submit(answer):
-    aocd.submit(answer, part=PART, day=DAY, year=YEAR)
+    response = input(f'Submit {answer} [y/n]: ')
+    if response.lower() == 'y':
+        aocd.submit(answer, part=PART, day=DAY, year=YEAR)
