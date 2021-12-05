@@ -10,6 +10,11 @@ __all__ = ('get_input_as')
 
 CURRENT_FP = Path(sys.argv[0])
 CURRENT_DIR = CURRENT_FP.parent
+if CURRENT_DIR.name == '':
+    # Running in directory
+    CURRENT_FP = Path(os.getcwd()) / CURRENT_FP
+    CURRENT_DIR = CURRENT_FP.parent
+
 INPUT_FP = CURRENT_DIR / 'input.txt'
 
 try:
@@ -42,6 +47,6 @@ def get_input_as(callback=str, sep=None):
 
 
 def submit(answer):
-    response = input(f'Submit {answer} [y/n]: ')
+    response = input(f'Submit {answer} [y/N]: ')
     if response.lower() == 'y':
         aocd.submit(answer, part=PART, day=DAY, year=YEAR)
