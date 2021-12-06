@@ -47,6 +47,9 @@ def get_input_as(callback=str, sep=None):
 
 
 def submit(answer):
+    if not isinstance(answer, int):
+        print(f'Warning: {answer} is not an int')
+
     response = input(f'Submit {answer} [y/N]: ')
     if response.lower() == 'y':
         aocd.submit(answer, part=PART, day=DAY, year=YEAR)
