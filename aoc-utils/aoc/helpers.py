@@ -47,7 +47,9 @@ def get_input_as(callback=str, sep=None):
 
 
 def submit(answer):
-    if not isinstance(answer, int):
+    try:
+        answer = int(answer)
+    except ValueError:
         print(f'Warning: {answer} is not an int')
 
     response = input(f'Submit {answer} [y/N]: ')
