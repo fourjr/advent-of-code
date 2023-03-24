@@ -33,15 +33,19 @@ for cmd in inp:
 
 # calculating sizes
 sizes = {}
-def calculate_size(directory, name):
+def calculate_size(directory, name, past_names=''):
+    # ensure that directories with the same name will not be merged into one and overwritten
+    functional_name = past_names + name
+
     total_size = 0
     for k, v in directory.items():
         if k == "files":
             total_size += v
         else:
-            total_size += calculate_size(v, k)
+            total_size += calculate_size(v, k, functional_name)
 
-    sizes[name] = total_size
+    sizes[functional_name] = total_size
+
     return total_size
 
 

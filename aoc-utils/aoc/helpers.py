@@ -62,3 +62,11 @@ def submit(answer):
     response = input(f'Submit {answer} [y/N]: ')
     if response.lower() == 'y':
         aocd.submit(answer, part=PART, day=DAY, year=YEAR)
+
+
+def sign(x):
+    if x < 0:
+        return -1
+    if x > 0:
+        return 1
+    return 0
