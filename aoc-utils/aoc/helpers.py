@@ -5,7 +5,7 @@ from pathlib import Path
 import aocd
 
 
-__all__ = ('get_input_as')
+__all__ = ('get_input_as', 'get_input')
 
 
 CURRENT_FP = Path(sys.argv[0])
